@@ -1,8 +1,6 @@
-
-
-import matplotlib.pyplot as plt
 import numpy as np
-from binarySearch import binarySearch
+
+from model.binarySearch import binarySearch
 
 gamma = np.linspace(10, 100)
 y = np.ones(len(gamma))
