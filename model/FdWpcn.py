@@ -78,9 +78,6 @@ class FdWpcnBase(object):
 
     # get the user position
     def getUserPositionResult(self):
-        # check dp done
-        if self.userOrder:
-            return self.userOrder
         flag = self.flag
         while flag:
             nt = self.usTraceMap[flag]
@@ -94,8 +91,9 @@ class FdWpcnBase(object):
 
     # set gain
     def setGain(self, gain):
-        self.gain = gain
-
+        self.gain = list(gain[0])
+        self.ueCount = len(self.gain)
+        self.flag = 2 ** (self.ueCount) - 1
         # initial all the records
         self.dpMap = {0: 0.0}
         self.usTraceMap = {}
@@ -105,13 +103,14 @@ class FdWpcnBase(object):
         self.userOrder = []
         self.throughput = []
         self.zList = []
+        self.dp(self.flag)
 
     def getTime(self):
+        if self.timeList:
+            return self.timeList
         if not self.zList:
             self.getUserPositionResult()
 
-        if self.timeList:
-            return self.timeList
         leftTime = 1.0
         for i in self.zList:
             t2 = leftTime / (1 + i)
@@ -179,7 +178,7 @@ class FairFdWpcn(FdWpcnBase):
             eps = SumExpress(r1, r2)
             bs = binarySearch(0, BINARY_SEARCH_END, eps.fun)
             x = bs.getResult()
-            return np.log(1 + x) - x / (1 + x), x
+            return np.log(1 + x) - x / (1 + x), x / r2
 
         if r2 < r1:
             return 0.0, 1.0
@@ -195,8 +194,3 @@ if __name__ == "__main__":
     # gain = np.abs(np.random.rand(4) * 10)
 
     gain = [79, 65, 95, 50, 44, 23, 9, 300]
-    obj = SumFdWpcn(gain)
-    print(obj.getThroughputResult())
-    print(obj.getUserPositionResult())
-    print(sum(obj.getTh()))
-    print(len(obj.getTime()))

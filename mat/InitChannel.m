@@ -1,6 +1,8 @@
-function [ H ] = InitChannel( k, Nt )
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
-    H = normrnd(0, 1, [k, Nt]);
+function [ H ] = InitChannel( k, Nt)
+
+    H1 = normrnd(0, 1, [k, Nt]);
+    H2 = normrnd(0, 1, [k, Nt]);
+    H = H1 + H2 * 1i;
+    
 end
 

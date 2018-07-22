@@ -18,10 +18,11 @@ class TimeAllocationModel(BaseSCAModel):
         self.fdWpcn.setGain(gamma)
 
         # post
-        self.resultModel.th = self.fdWpcn.get
-        self.resultModel.t = self.fdWpcn.getTime()
         self.resultModel.userOrder = self.fdWpcn.getUserPositionResult()
+        self.resultModel.th = self.fdWpcn.getTh()
+        self.resultModel.t = self.fdWpcn.getTime()
         self.userOrderChange()
+        return self.resultModel.th
 
     def getGamma(self):
         St = self.resultModel.sendBeam
@@ -29,7 +30,7 @@ class TimeAllocationModel(BaseSCAModel):
         Hu = self.channel.Hu
         Hd = self.channel.Hd
 
-        return self.client.getGamma(self, St, Sr, Hu, Hd)
+        return self.client.getGamma(St, Sr, Hu, Hd)
 
 
     def userOrderChange(self):
@@ -42,4 +43,5 @@ class TimeAllocationModel(BaseSCAModel):
 
         self.channel.Hu = Hu
         self.channel.Hd = Hd
+
 

@@ -8,7 +8,7 @@ function [ St, th ] = findSt_nosi( t, Sr, Hu, Hd, Hsi )
 	% m: Nt 
     cvx_begin sdp quiet
         %cvx_precision low;
-        variable St(n,n) hermitian semidefinite;;
+        variable St(n,n) hermitian semidefinite;
         
 		expression throughput(k);
 		for i = 1:k

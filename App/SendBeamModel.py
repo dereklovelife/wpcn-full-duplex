@@ -17,8 +17,8 @@ class SendBeamModel(BaseSCAModel):
 
         # post
         self.resultModel.sendBeam = St
-        self.resultModel.th = th
+        self.resultModel.th = [x[0] for x in th]
 
-        return th
+        return self.resultModel.th
 
 

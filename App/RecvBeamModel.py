@@ -10,7 +10,7 @@ class RecvBeamModel(BaseSCAModel):
     def iteartion(self):
         # pre
         t = self.resultModel.t
-        St = self.resultModel.SendBeam
+        St = self.resultModel.sendBeam
         Hu = self.channel.Hu
         Hd = self.channel.Hd
         Hsi = self.channel.Hsi
@@ -18,7 +18,7 @@ class RecvBeamModel(BaseSCAModel):
         Sr, th = self.client.getRecvBeam(t, St, Hu, Hd, Hsi)
 
         # post
-        self.resultModel.sendBeam = Sr
-        self.resultModel.th = th
+        self.resultModel.recvBeam = Sr
+        self.resultModel.th = [x[0] for x in th]
 
-        return th
+        return self.resultModel.th
