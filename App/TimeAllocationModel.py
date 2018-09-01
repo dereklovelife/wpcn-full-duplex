@@ -12,12 +12,14 @@ class TimeAllocationModel(BaseSCAModel):
         self.fdWpcn = fdWpcn
 
     def iteartion(self):
-        # pre
+        # get new gamma (after the send/recv beam iteration, gamma needs to be updated.)
         gamma = self.getGamma()
-
+        # set new gamma to the result model, and also start iteration.
         self.fdWpcn.setGain(gamma)
 
-        # post
+        # use dp to iterate both the time allocation and the user schedule.
+
+        # result record
         self.resultModel.userOrder = self.fdWpcn.getUserPositionResult()
         self.resultModel.th = self.fdWpcn.getTh()
         self.resultModel.t = self.fdWpcn.getTime()

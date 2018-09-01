@@ -55,7 +55,6 @@ class FdWpcnBase(object):
 
             if tmpFlag & base:
                 # ue_i is in the left user set
-
                 cur,z = self.getThroughput(tmpFlag, i, base)
 
                 if cur > maxTmp:
@@ -103,6 +102,8 @@ class FdWpcnBase(object):
         self.userOrder = []
         self.throughput = []
         self.zList = []
+
+        ## iteration
         self.dp(self.flag)
 
     def getTime(self):
@@ -182,6 +183,7 @@ class FairFdWpcn(FdWpcnBase):
 
         if r2 < r1:
             return 0.0, 1.0
+
         eps = FairExpress(r1, r2)
         bs = binarySearch(0, BINARY_SEARCH_END, eps.fun)
 
@@ -193,4 +195,19 @@ class FairFdWpcn(FdWpcnBase):
 if __name__ == "__main__":
     # gain = np.abs(np.random.rand(4) * 10)
 
-    gain = [79, 65, 95, 50, 44, 23, 9, 300]
+    gain = [[79, 65, 95, 50, 44, 23, 9, 300]]
+    sumModel = SumFdWpcn(gain)
+    fairModel = FairFdWpcn(gain)
+
+
+    sumModel.setGain(gain)
+    fairModel.setGain(gain)
+
+    print sumModel.getUserPositionResult()
+    print sumModel.getTh()
+
+    print fairModel.getUserPositionResult()
+    print fairModel.getTh()
+
+
+

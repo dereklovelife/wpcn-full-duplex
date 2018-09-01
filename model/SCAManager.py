@@ -28,11 +28,8 @@ class SCAManager(object):
         self.itreationResultLists.append(0.0)
 
         for i in xrange(self.times):
-            print self.itreationResultLists
             for fun in self.funcList:
                 cur = fun()
-                print cur
-                print sum(cur)
             if np.abs(sum(cur) - self.itreationResultLists[-1]) < self.threhold:
                 self.itreationResultLists.append(sum(cur))
                 break
