@@ -7,7 +7,7 @@ from model.FdWpcn import *
 from model.SCAManager import *
 from model.ChannelModel import *
 from mat.MatalbClient import *
-
+import copy
 ## initial the sum-throughput maximization sca solver
 def getSumFDManager(Channel, result):
 
@@ -89,11 +89,10 @@ def getInitResultModel(Channel, flag = True):
 def _getInitChannel(k, Nt):
     return MatlabClient().InitChannel(k, Nt)
 
-
-
 def initChannel(k, Nt, d1, alpha, pNoise):
     Hd = _getInitChannel(k, Nt)
-    Hu = _getInitChannel(k, Nt)
+    # Hu = _getInitChannel(k, Nt)
+    Hu = copy.deepcopy(Hd)
     Hsi = _getInitChannel(Nt, Nt)
 
     ## Small-scale loss of both the UL and the DL is added to the DL
@@ -101,8 +100,8 @@ def initChannel(k, Nt, d1, alpha, pNoise):
         for j in range(len(Hd[i])):
             realpart = Hd[i][j].real
             imagpart = Hd[i][j].imag
-            realpart *= np.sqrt(d1[i] ** (-alpha) / pNoise * 10 ** (-2))
-            imagpart *= np.sqrt(d1[i] ** (-alpha) / pNoise * 10 ** (-2))
+            realpart *= np.sqrt(d1[i] ** (-alpha * 2) / pNoise * 10 ** (-2))
+            imagpart *= np.sqrt(d1[i] ** (-alpha * 2) / pNoise * 10 ** (-2))
             Hd[i][j] = complex(realpart, imagpart)
 
     return ChannelModel(Hu, Hd, Hsi)
@@ -112,25 +111,33 @@ if __name__ == "__main__":
     import os
     import LogUtil
 
-    os.chdir("D:\wpcn-full-duplex\mat")
-    channel = initChannel(2,2, [3,4], 2, 10 ** (-7))
+    os.chdir("F:\wpcn-full-duplex\mat")
+    k = 3
+    Nt = 4
+    alpha = 2
+    pNoise = 10 ** (-7)
+    times = 200
 
-    logger = LogUtil.getLogger(2,2,1)
-    result = getInitResultModel(channel, False)
-
-    logger.info("Channel : %s" % channel)
     import copy
 
-    channel2 = copy.copy(channel)
-    result2 = copy.copy(result)
-    Manager = getSumFDManager(channel, result)
-    ret = Manager.execute()
-    logger.info("flag: %s, result: %s" % (ret, result))
+    for _ in xrange(times):
+        d = [3 for _ in xrange(k)]
+        channel = initChannel(k, Nt, d, alpha, pNoise)
 
-    print Manager.itreationResultLists
+        logger = LogUtil.getLogger(k,Nt,1)
+        result = getInitResultModel(channel, True)
 
-    Manager2 = getFairFDManager(channel2, result2)
-    ret = Manager2.execute()
-    logger.info("flag: %s, result: %s" % (ret, result2))
+        logger.info("Channel : %s" % channel)
 
-    print Manager2.itreationResultLists
+        channel2 = copy.deepcopy(channel)
+        result2 = copy.deepcopy(result)
+        Manager = getSumFDManager(channel, result)
+        ret = Manager.execute()
+        logger.info("flag: %s, result: %s" % (ret, result))
+        print Manager.itreationResultLists
+
+        Manager2 = getFairFDManager(channel2, result2)
+        ret = Manager2.execute()
+        logger.info("flag: %s, result: %s" % (ret, result2))
+        print Manager2.itreationResultLists
+

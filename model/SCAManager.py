@@ -13,7 +13,7 @@ funList has to assign the result.
 '''
 class SCAManager(object):
 
-    def __init__(self, initValue, funList = [], times = 20, threhold = 0.001):
+    def __init__(self, initValue, funList = [], times = 10, threhold = 0.001):
         self.value = initValue
         self.funcList = funList
         self.times = times
@@ -30,6 +30,8 @@ class SCAManager(object):
         for i in xrange(self.times):
             for fun in self.funcList:
                 cur = fun()
+            if sum(cur) < self.itreationResultLists[-1]:
+                break
             if np.abs(sum(cur) - self.itreationResultLists[-1]) < self.threhold:
                 self.itreationResultLists.append(sum(cur))
                 break

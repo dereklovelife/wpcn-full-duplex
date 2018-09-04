@@ -7,7 +7,7 @@ import os
 ## 切换工作目录（必须保证我们写的matlab的.m文件在工作目录下）
 ## 在这里我将我自己写的InitChannel.m放在了D:\wpcn-full-duplex\mat
 
-os.chdir("D:\wpcn-full-duplex\mat")
+os.chdir("F:\wpcn-full-duplex\mat")
 
 ## 获取到matlab engine，之后调用matlab文件，就通过这个engine调用
 

@@ -1,7 +1,7 @@
 from mat.MatalbClient import *
 from mat.WorkingDirectory import changeDirectory
 
-changeDirectory("D:\wpcn-full-duplex\mat")
+changeDirectory("F:\wpcn-full-duplex\mat")
 
 client = MatlabClient()
 
