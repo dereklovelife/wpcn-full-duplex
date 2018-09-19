@@ -1,6 +1,6 @@
 import numpy as np
 
-from model.binarySearch import binarySearch
+from model.util.binarySearch import binarySearch
 
 BINARY_SEARCH_START = 0.0
 BINARY_SEARCH_END = 1000000.0

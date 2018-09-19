@@ -1,6 +1,3 @@
-
-from model.FdWpcn import SumFdWpcn
-import numpy as np
 from BaseSCAModel import BaseSCAModel
 
 class TimeAllocationModel(BaseSCAModel):

@@ -2,12 +2,14 @@
 from RecvBeamModel import *
 from SendBeamModel import *
 from TimeAllocationModel import *
-from model.ResultModel import *
-from model.FdWpcn import *
-from model.SCAManager import *
-from model.ChannelModel import *
 from mat.MatalbClient import *
-import copy
+from model.fd.FdWpcn import *
+from model.util.ChannelModel import *
+from model.util.ResultModel import *
+from model.util.SCAManager import *
+from model.util.BaseManager import *
+
+
 ## initial the sum-throughput maximization sca solver
 def getSumFDManager(Channel, result):
 
@@ -65,17 +67,49 @@ def getTestFairFDManager(Channel, result):
     Manager = SCAManager(0, [recvModel.iteartion, sendModel.iteartion])
     return Manager
 
-def getSumHDManager():
-    return None
+def getSumHDManager(Channel, result):
+    return SumHdManager(HdClient(), Channel, result)
 
-def getFairHDManager():
-    return None
+def getFairHDManager(Channel, result):
+    return FairHdManager(HdClient(), Channel, result)
 
-def getSumFDNosiManager():
-    return None
+def getSumFDNosiManager(Channel, result):
+    beamClient = SumNosiClient()
+    client = MatlabClient()
+    fdWpcn = SumFdWpcn([])
 
-def getFairFDNosiManager():
-    return None
+    ## assemble the sca manager
+    ## 1. sendbeam model
+    sendModel = SendBeamModel(Channel, result, beamClient)
+
+    ## 2. recvbeam model
+    recvModel = RecvBeamModel(Channel, result, beamClient)
+
+    ## 3. time allocation model
+    timeModel = TimeAllocationModel(Channel, result, client, fdWpcn)
+
+    ## 4. assemble
+    Manager = SCAManager(0, [recvModel.iteartion, timeModel.iteartion, sendModel.iteartion])
+    return Manager
+
+def getFairFDNosiManager(Channel, result):
+    beamClient = FairClient()
+    client = MatlabClient()
+    fdWpcn = FairFdWpcn([])
+
+    ## assemble the sca manager
+    ## 1. sendbeam model
+    sendModel = SendBeamModel(Channel, result, beamClient)
+
+    ## 2. recvbeam model
+    recvModel = RecvBeamModel(Channel, result, beamClient)
+
+    ## 3. time allocation model
+    timeModel = TimeAllocationModel(Channel, result, client, fdWpcn)
+
+    ## 4. assemble
+    Manager = SCAManager(0, [recvModel.iteartion, timeModel.iteartion, sendModel.iteartion])
+    return Manager
 
 ## initial the result model
 def getInitResultModel(Channel, flag = True):
@@ -111,12 +145,12 @@ if __name__ == "__main__":
     import os
     import LogUtil
 
-    os.chdir("F:\wpcn-full-duplex\mat")
+    os.chdir("D:\wpcn-full-duplex\mat")
     k = 3
     Nt = 4
     alpha = 2
     pNoise = 10 ** (-7)
-    times = 200
+    times = 2
 
     import copy
 
@@ -129,15 +163,46 @@ if __name__ == "__main__":
 
         logger.info("Channel : %s" % channel)
 
+
         channel2 = copy.deepcopy(channel)
+        channel3 = copy.deepcopy(channel)
+        channel4 = copy.deepcopy(channel)
+        channel5 = copy.deepcopy(channel)
+        channel6 = copy.deepcopy(channel)
+
         result2 = copy.deepcopy(result)
+        result3 = copy.deepcopy(result)
+        result4 = copy.deepcopy(result)
+        result5 = copy.deepcopy(result)
+        result6 = copy.deepcopy(result)
+
+        ## fd sum Manager
         Manager = getSumFDManager(channel, result)
         ret = Manager.execute()
         logger.info("flag: %s, result: %s" % (ret, result))
-        print Manager.itreationResultLists
 
-        Manager2 = getFairFDManager(channel2, result2)
-        ret = Manager2.execute()
+        ## fd fair Manager
+        Manager = getFairFDManager(channel2, result2)
+        ret = Manager.execute()
         logger.info("flag: %s, result: %s" % (ret, result2))
-        print Manager2.itreationResultLists
+
+        ## hd sum Manager
+        Manager = getSumHDManager(channel3, result3)
+        ret = Manager.execute()
+        logger.info("flag: %s, result: %s" % (ret, result3))
+
+        ## hd fair Manager
+        Manager = getFairHDManager(channel4, result4)
+        ret = Manager.execute()
+        logger.info("flag: %s, result: %s" % (ret, result4))
+
+        ## fd sum Manger (No noise)
+        Manager = getSumFDNosiManager(channel5, result5)
+        ret = Manager.execute()
+        logger.info("flag: %s, result: %s" % (ret, result5))
+
+        ## fd fair Manager (No noise)
+        Manager = getFairFDNosiManager(channel6, result6)
+        ret = Manager.execute()
+        logger.info("flag: %s, result: %s" % (ret, result6))
 

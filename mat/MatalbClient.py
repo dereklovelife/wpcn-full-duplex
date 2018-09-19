@@ -49,6 +49,35 @@ class MatlabClient(object):
         else:
             return self.engine.InitSt2(Hd, nargout = 1)
 
+    def sumHdOptimization(self, Hu, Hd, Hsi):
+        return self.engine.sumThHD(Hu, Hd, Hsi, nargout = 2)
+
+    def fairHdOptimization(self, Hu, Hd, Hsi):
+        return self.engine.fairHD(Hu, Hd, Hsi, nargout = 2)
+
+    def sumNosiSendBeamOptimization(self, t, Sr, Hu, Hd, Hsi):
+        t = matlab.double(t)
+        Hu = matlab.double(Hu, is_complex=True)
+        Hd = matlab.double(Hd, is_complex=True)
+        return self.engine.findSt_nosi(t, Sr, Hu, Hd, Hsi, nargout=2)
+
+    def sumNosiRecvBeamOptimization(self, t, St, Hu, Hd, Hsi):
+        tt = matlab.double(t)
+        Hu = matlab.double(Hu, is_complex=True)
+        Hd = matlab.double(Hd, is_complex=True)
+        return self.engine.findSr_nosi(tt, St, Hu, Hd, Hsi, nargout=2)
+
+    def fairNosiSendBeamOptimization(self, t, Sr, Hu, Hd, Hsi):
+        t = matlab.double(t)
+        Hu = matlab.double(Hu, is_complex=True)
+        Hd = matlab.double(Hd, is_complex=True)
+        return self.engine.fairFindSt_nosi(t, Sr, Hu, Hd, Hsi, nargout=2)
+
+    def fairNosiRecvBeamOptimization(self, t, St, Hu, Hd, Hsi):
+        t = matlab.double(t)
+        Hu = matlab.double(Hu, is_complex=True)
+        Hd = matlab.double(Hd, is_complex=True)
+        return self.engine.fairFindSr_nosi(t, St, Hu, Hd, Hsi, nargout=2)
 
 # base client
 class BaseClient(object):
@@ -82,4 +111,38 @@ class FairClient(BaseClient):
         return self.client.fairRecvBeamOptimization(t, Sr, Hu, Hd, Hsi)
 
 
+
+class SumNosiClient(BaseClient):
+
+    def __init__(self):
+        self.client = MatlabClient()
+
+    def getRecvBeam(self, t, Sr, Hu, Hd, Hsi):
+        return self.client.sumNosiRecvBeamOptimization(t, Sr, Hu, Hd, Hsi)
+
+    def getSendBeam(self, t, Sr, Hu, Hd, Hsi):
+        return self.client.sumNosiSendBeamOptimization(t, Sr, Hu, Hd, Hsi)
+
+class FairNosiClient(BaseClient):
+
+    def __init__(self):
+        self.client = MatlabClient()
+
+    def getRecvBeam(self, t, Sr, Hu, Hd, Hsi):
+        return self.client.fairNosiRecvBeamOptimization(t, Sr, Hu, Hd, Hsi)
+
+    def getSendBeam(self, t, Sr, Hu, Hd, Hsi):
+        return self.client.fairNosiSendBeamOptimization(t, Sr, Hu, Hd, Hsi)
+
+
+class HdClient(object):
+
+    def __init__(self):
+        self.client = MatlabClient()
+
+    def sumth(self, Hu, Hd, Hsi):
+        return self.client.sumHdOptimization(Hu, Hd, Hsi)
+
+    def fairth(self, Hu, Hd, Hsi):
+        return self.client.fairHdOptimization(Hu, Hd, Hsi)
 
